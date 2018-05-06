@@ -3,6 +3,7 @@ using CriminalDB.Repository.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static CriminalDB.Utilities.GenericParser;
 
 namespace CriminalDB.Utilities
 {
@@ -10,17 +11,10 @@ namespace CriminalDB.Utilities
     {
         public static void RemoveCrime()
         {
-            Console.WriteLine("Crime ID:");
-            string id = Console.ReadLine();
-            if (int.TryParse(id, out int result) == false)
-            {
-                Console.WriteLine("NaN");
-                return;
-            }
-            int _id = int.Parse(id);
+            int id = ParseValue<int>(int.TryParse, "Crime ID:");
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
-                Crime crime = unitOfWork.CrimeRepository.Get(_id);
+                Crime crime = unitOfWork.CrimeRepository.Get(id);
                 if (crime == null)
                 {
                     Console.WriteLine("No crime with such id.");

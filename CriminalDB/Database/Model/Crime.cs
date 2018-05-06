@@ -24,7 +24,7 @@ namespace CriminalDB.Database.Model
 
         [Required]
         [MinLength(1)]
-        public ICollection<Criminal> Criminals { get; set; }
-        public ICollection<Victim> Victims { get; set; }
+        public ICollection<CrimeCriminal> CrimeCriminals { get; set; }
+        public ICollection<CrimeVictim> CrimeVictims { get; set; }
     }
 }

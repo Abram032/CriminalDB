@@ -15,5 +15,11 @@ namespace CriminalDB.Database.Model
         {
             optionsBuilder.UseSqlite("Data Source=Crimes.db");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CrimeCriminal>().HasKey(x => new { x.CrimeID, x.ID });
+            modelBuilder.Entity<CrimeVictim>().HasKey(x => new { x.CrimeID, x.ID });
+        }
     }
 }

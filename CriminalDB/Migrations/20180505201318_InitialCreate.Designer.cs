@@ -11,8 +11,8 @@ using System;
 namespace CriminalDB.Migrations
 {
     [DbContext(typeof(CriminalContext))]
-    [Migration("20180504202901_Initial")]
-    partial class Initial
+    [Migration("20180505201318_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,32 @@ namespace CriminalDB.Migrations
                     b.ToTable("Crimes");
                 });
 
+            modelBuilder.Entity("CriminalDB.Database.Model.CrimeCriminal", b =>
+                {
+                    b.Property<int>("CrimeID");
+
+                    b.Property<int>("ID");
+
+                    b.HasKey("CrimeID", "ID");
+
+                    b.HasIndex("ID");
+
+                    b.ToTable("CrimeCriminal");
+                });
+
+            modelBuilder.Entity("CriminalDB.Database.Model.CrimeVictim", b =>
+                {
+                    b.Property<int>("CrimeID");
+
+                    b.Property<int>("ID");
+
+                    b.HasKey("CrimeID", "ID");
+
+                    b.HasIndex("ID");
+
+                    b.ToTable("CrimeVictim");
+                });
+
             modelBuilder.Entity("CriminalDB.Database.Model.Criminal", b =>
                 {
                     b.Property<int>("ID")
@@ -51,8 +77,6 @@ namespace CriminalDB.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(50);
-
-                    b.Property<int?>("CrimeID");
 
                     b.Property<DateTime>("DateOfBirth");
 
@@ -83,8 +107,6 @@ namespace CriminalDB.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CrimeID");
-
                     b.ToTable("Criminals");
                 });
 
@@ -96,8 +118,6 @@ namespace CriminalDB.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(50);
-
-                    b.Property<int?>("CrimeID");
 
                     b.Property<DateTime>("DateOfBirth");
 
@@ -125,23 +145,33 @@ namespace CriminalDB.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CrimeID");
-
                     b.ToTable("Victims");
                 });
 
-            modelBuilder.Entity("CriminalDB.Database.Model.Criminal", b =>
+            modelBuilder.Entity("CriminalDB.Database.Model.CrimeCriminal", b =>
                 {
-                    b.HasOne("CriminalDB.Database.Model.Crime")
-                        .WithMany("Criminals")
-                        .HasForeignKey("CrimeID");
+                    b.HasOne("CriminalDB.Database.Model.Crime", "Crime")
+                        .WithMany("CrimeCriminals")
+                        .HasForeignKey("CrimeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CriminalDB.Database.Model.Criminal", "Criminal")
+                        .WithMany("Crimes")
+                        .HasForeignKey("ID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CriminalDB.Database.Model.Victim", b =>
+            modelBuilder.Entity("CriminalDB.Database.Model.CrimeVictim", b =>
                 {
-                    b.HasOne("CriminalDB.Database.Model.Crime")
-                        .WithMany("Victims")
-                        .HasForeignKey("CrimeID");
+                    b.HasOne("CriminalDB.Database.Model.Crime", "Crime")
+                        .WithMany("CrimeVictims")
+                        .HasForeignKey("CrimeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CriminalDB.Database.Model.Victim", "Victim")
+                        .WithMany("Crimes")
+                        .HasForeignKey("ID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

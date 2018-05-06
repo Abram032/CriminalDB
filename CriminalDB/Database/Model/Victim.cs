@@ -7,6 +7,6 @@ namespace CriminalDB.Database.Model
 {
     public class Victim : Person
     {
-
+        public ICollection<CrimeVictim> Crimes { get; set; }
     }
 }

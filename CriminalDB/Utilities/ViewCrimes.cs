@@ -2,7 +2,9 @@
 using CriminalDB.Repository.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using static CriminalDB.Utilities.GenericParser;
 
 namespace CriminalDB.Utilities
 {
@@ -32,14 +34,14 @@ namespace CriminalDB.Utilities
                     if (showCriminals)
                     {
                         Console.WriteLine("Criminals:");
-                        foreach (var criminal in crime.Criminals)
+                        foreach (var criminal in crime.CrimeCriminals.Select(x => x.Criminal))
                             Console.WriteLine(criminal.ID + ": " + criminal.FirstName + " " + criminal.LastName);
                         Console.WriteLine();
                     }
                     if (showVictims)
                     {
                         Console.WriteLine("Victims:");
-                        foreach (var victim in crime.Victims)
+                        foreach (var victim in crime.CrimeVictims.Select(x => x.Victim))
                             Console.WriteLine(victim.ID + ": " + victim.FirstName + " " + victim.LastName);
                         Console.WriteLine();
                     }
@@ -54,20 +56,13 @@ namespace CriminalDB.Utilities
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 Crime crime = null;
-                Console.WriteLine("Crime ID:");
-                string id = Console.ReadLine();
-                if (int.TryParse(id, out int result) == false)
-                {
-                    Console.WriteLine("NaN");
-                    return;
-                }
-                int _id = int.Parse(id);
+                int id = ParseValue<int>(int.TryParse, "Criminal ID:");
                 if (showCriminals == false && showVictims == false)
-                    crime = unitOfWork.CrimeRepository.Get(_id);
+                    crime = unitOfWork.CrimeRepository.Get(id);
                 else if (showCriminals == true && showVictims == false)
-                    crime = unitOfWork.CrimeRepository.GetCrimeWithCriminals(_id);
+                    crime = unitOfWork.CrimeRepository.GetCrimeWithCriminals(id);
                 else
-                    crime = unitOfWork.CrimeRepository.GetCrimeWithCriminalsAndVictims(_id);
+                    crime = unitOfWork.CrimeRepository.GetCrimeWithCriminalsAndVictims(id);
                 if (crime == null)
                 {
                     Console.WriteLine("Crime ID not found");
@@ -82,14 +77,14 @@ namespace CriminalDB.Utilities
                 if (showCriminals)
                 {
                     Console.WriteLine("Criminals:");
-                    foreach (var criminal in crime.Criminals)
+                    foreach (var criminal in crime.CrimeCriminals.Select(x => x.Criminal))
                         Console.WriteLine(criminal.ID + ": " + criminal.FirstName + " " + criminal.LastName);
                     Console.WriteLine();
                 }
                 if (showVictims)
                 {
                     Console.WriteLine("Victims:");
-                    foreach (var victim in crime.Victims)
+                    foreach (var victim in crime.CrimeVictims.Select(x => x.Victim))
                         Console.WriteLine(victim.ID + ": " + victim.FirstName + " " + victim.LastName);
                     Console.WriteLine();
                 }

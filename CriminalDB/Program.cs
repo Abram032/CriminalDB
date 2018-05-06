@@ -16,7 +16,7 @@ namespace CriminalDB
         {
             using (var context = new CriminalContext())
             {
-                context.Database.Migrate();
+                context.Database.EnsureCreated();
             }
             bool menu = true;
 

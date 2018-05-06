@@ -22,14 +22,20 @@ namespace CriminalDB.Repository.Concrete
 
         public Crime GetCrimeWithCriminals(int id)
         {
-            return CriminalContext.Crimes.Include(x => x.Criminals).Where(x => x.CrimeID == id).SingleOrDefault();
+            return CriminalContext.Crimes
+                .Include(x => x.CrimeCriminals)
+                .ThenInclude(x => x.Criminal)
+                .Where(x => x.CrimeID == id)
+                .SingleOrDefault();
         }
 
         public Crime GetCrimeWithCriminalsAndVictims(int id)
         {
             return CriminalContext.Crimes
-                .Include(x => x.Criminals)
-                .Include(x => x.Victims)
+                .Include(x => x.CrimeCriminals)
+                .ThenInclude(x => x.Criminal)
+                .Include(x => x.CrimeVictims)
+                .ThenInclude(x => x.Victim)
                 .Where(x => x.CrimeID == id)
                 .SingleOrDefault();
         }
@@ -42,7 +48,8 @@ namespace CriminalDB.Repository.Concrete
         public IEnumerable<Crime> GetCrimesWithCriminals()
         {
             return CriminalContext.Crimes.
-                Include(x => x.Criminals)
+                Include(x => x.CrimeCriminals)
+                .ThenInclude(x => x.Criminal)
                 .OrderBy(x => x.CrimeID)
                 .ToList();
         }
@@ -50,8 +57,10 @@ namespace CriminalDB.Repository.Concrete
         public IEnumerable<Crime> GetCrimesWithCriminalsAndVictims()
         {
             return CriminalContext.Crimes
-                .Include(x => x.Criminals)
-                .Include(x => x.Victims)
+                .Include(x => x.CrimeCriminals)
+                .ThenInclude(x => x.Criminal)
+                .Include(x => x.CrimeVictims)
+                .ThenInclude(x => x.Victim)
                 .OrderBy(x => x.CrimeID)
                 .ToList();
         }
