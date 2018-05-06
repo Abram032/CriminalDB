@@ -10,6 +10,7 @@ namespace CriminalDB.Repository.Abstract
         //IRepository Repo { get; }
         ICrimeRepository CrimeRepository { get; }
         ICriminalRepository CriminalRepository { get; }
+        ICrimeCriminalRepository CrimeCriminalRepository { get; }
         int Complete();
     }
 }
