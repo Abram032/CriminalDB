@@ -52,7 +52,7 @@ namespace CriminalDB.Migrations
 
                     b.HasIndex("ID");
 
-                    b.ToTable("CrimeCriminal");
+                    b.ToTable("CrimeCriminals");
                 });
 
             modelBuilder.Entity("CriminalDB.Database.Model.CrimeVictim", b =>
@@ -65,7 +65,7 @@ namespace CriminalDB.Migrations
 
                     b.HasIndex("ID");
 
-                    b.ToTable("CrimeVictim");
+                    b.ToTable("CrimeVictims");
                 });
 
             modelBuilder.Entity("CriminalDB.Database.Model.Criminal", b =>

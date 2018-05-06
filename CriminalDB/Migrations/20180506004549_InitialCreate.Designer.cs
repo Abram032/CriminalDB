@@ -11,7 +11,7 @@ using System;
 namespace CriminalDB.Migrations
 {
     [DbContext(typeof(CriminalContext))]
-    [Migration("20180505201318_InitialCreate")]
+    [Migration("20180506004549_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace CriminalDB.Migrations
 
                     b.HasIndex("ID");
 
-                    b.ToTable("CrimeCriminal");
+                    b.ToTable("CrimeCriminals");
                 });
 
             modelBuilder.Entity("CriminalDB.Database.Model.CrimeVictim", b =>
@@ -66,7 +66,7 @@ namespace CriminalDB.Migrations
 
                     b.HasIndex("ID");
 
-                    b.ToTable("CrimeVictim");
+                    b.ToTable("CrimeVictims");
                 });
 
             modelBuilder.Entity("CriminalDB.Database.Model.Criminal", b =>

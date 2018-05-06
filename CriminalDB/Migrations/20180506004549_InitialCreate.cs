@@ -68,7 +68,7 @@ namespace CriminalDB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CrimeCriminal",
+                name: "CrimeCriminals",
                 columns: table => new
                 {
                     CrimeID = table.Column<int>(nullable: false),
@@ -76,15 +76,15 @@ namespace CriminalDB.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CrimeCriminal", x => new { x.CrimeID, x.ID });
+                    table.PrimaryKey("PK_CrimeCriminals", x => new { x.CrimeID, x.ID });
                     table.ForeignKey(
-                        name: "FK_CrimeCriminal_Crimes_CrimeID",
+                        name: "FK_CrimeCriminals_Crimes_CrimeID",
                         column: x => x.CrimeID,
                         principalTable: "Crimes",
                         principalColumn: "CrimeID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CrimeCriminal_Criminals_ID",
+                        name: "FK_CrimeCriminals_Criminals_ID",
                         column: x => x.ID,
                         principalTable: "Criminals",
                         principalColumn: "ID",
@@ -92,7 +92,7 @@ namespace CriminalDB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CrimeVictim",
+                name: "CrimeVictims",
                 columns: table => new
                 {
                     CrimeID = table.Column<int>(nullable: false),
@@ -100,15 +100,15 @@ namespace CriminalDB.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CrimeVictim", x => new { x.CrimeID, x.ID });
+                    table.PrimaryKey("PK_CrimeVictims", x => new { x.CrimeID, x.ID });
                     table.ForeignKey(
-                        name: "FK_CrimeVictim_Crimes_CrimeID",
+                        name: "FK_CrimeVictims_Crimes_CrimeID",
                         column: x => x.CrimeID,
                         principalTable: "Crimes",
                         principalColumn: "CrimeID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CrimeVictim_Victims_ID",
+                        name: "FK_CrimeVictims_Victims_ID",
                         column: x => x.ID,
                         principalTable: "Victims",
                         principalColumn: "ID",
@@ -116,23 +116,23 @@ namespace CriminalDB.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CrimeCriminal_ID",
-                table: "CrimeCriminal",
+                name: "IX_CrimeCriminals_ID",
+                table: "CrimeCriminals",
                 column: "ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CrimeVictim_ID",
-                table: "CrimeVictim",
+                name: "IX_CrimeVictims_ID",
+                table: "CrimeVictims",
                 column: "ID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CrimeCriminal");
+                name: "CrimeCriminals");
 
             migrationBuilder.DropTable(
-                name: "CrimeVictim");
+                name: "CrimeVictims");
 
             migrationBuilder.DropTable(
                 name: "Criminals");

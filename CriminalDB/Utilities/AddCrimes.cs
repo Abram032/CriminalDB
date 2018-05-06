@@ -22,8 +22,8 @@ namespace CriminalDB.Utilities
                 Console.WriteLine("Criminal {0}:", i + 1);
                 Criminal criminal = new Criminal();
                 criminal = CriminalInfo(criminal);
-                criminal.Crimes.Add(new CrimeCriminal { Crime = crime, Criminal = criminal });
-                crime.CrimeCriminals.Add(new CrimeCriminal { Crime = crime, Criminal = criminal });
+                //criminal.Crimes.Add(new CrimeCriminal { Crime = crime, Criminal = criminal });
+                //crime.CrimeCriminals.Add(new CrimeCriminal { Crime = crime, Criminal = criminal });
             }
             amount = ParseValue<int>(int.TryParse, "How many victims?");
             for (int i = 0; i < amount; i++)
@@ -32,13 +32,13 @@ namespace CriminalDB.Utilities
                 Console.WriteLine("Victim {0}:", i + 1);
                 Victim victim = new Victim();
                 victim = VictimInfo(victim);
-                crime.CrimeVictims.Add(new CrimeVictim { Crime = crime, Victim = victim });
+                //crime.CrimeVictims.Add(new CrimeVictim { Crime = crime, Victim = victim });
                 //victims.Add(victim);
             }
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 //Add data to database
-                unitOfWork.CrimeRepository.Add(crime);
+                //unitOfWork.CrimeRepository.Add(crime);
                 //unitOfWork.CriminalRepository.AddRange(criminals);
                 unitOfWork.Complete();
             }
