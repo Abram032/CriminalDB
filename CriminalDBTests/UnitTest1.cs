@@ -1,4 +1,4 @@
-using CriminalDB.Database.Model;
+using CriminalDB.Core.DataModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
