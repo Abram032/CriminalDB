@@ -9,7 +9,7 @@ namespace CriminalDB.Core.DataModels
         public int CrimeID { get; set; }
         public Crime Crime { get; set; }
 
-        public int ID { get; set; }
+        public int VictimID { get; set; }
         public Victim Victim { get; set; }
     }
 }

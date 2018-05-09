@@ -6,9 +6,8 @@ using static CriminalDB.Core.DataModels.Enums;
 
 namespace CriminalDB.Core.DataModels
 {
-    public class Crime
+    public class Crime : Entity
     {
-        public int CrimeID { get; set; }
         public string Type { get; set; }
         public DateTime Time { get; set; }
         public string Location { get; set; }

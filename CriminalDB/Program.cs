@@ -2,19 +2,14 @@
 using CriminalDB.Persistence.Context;
 using System;
 using System.Collections.Generic;
-using static CriminalDB.Persistence.Utilities.ViewCrimes;
-using static CriminalDB.Persistence.Utilities.ViewCriminals;
-using static CriminalDB.Persistence.Utilities.AddCrimes;
-using static CriminalDB.Persistence.Utilities.RemoveCrimes;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace CriminalDB
 {
-    //TODO: Get rid of data annotations and build constraints using Fluent API
     //TODO: Validation
-    //TODO: IoC for Utilities
-    //TODO: Upgrade adding, add removing, add more view options
+    //TODO: Upgrade adding
+    //TODO: Add more functions for custom repositories and use them for viewing
     class Program
     {
         public static void InitDatabase() => new InitDatabase().Main();

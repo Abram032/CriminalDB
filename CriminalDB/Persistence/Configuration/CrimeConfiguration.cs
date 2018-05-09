@@ -7,17 +7,18 @@ using System.Text;
 
 namespace CriminalDB.Persistence.Configuration
 {
-    public class CrimeConfiguration : IEntityTypeConfiguration<Crime>
+    public class CrimeConfiguration : EntityConfiguration<Crime>
     {
-        public void Configure(EntityTypeBuilder<Crime> builder)
+        public override void Configure(EntityTypeBuilder<Crime> builder)
         {
-            builder.HasKey(x => x.CrimeID);
+            base.Configure(builder);
             builder.Property(x => x.Type).IsRequired();
             builder.Property(x => x.Time).IsRequired().HasColumnType("DateTime");
             builder.Property(x => x.Location).IsRequired().HasMaxLength(100);
             builder.Property(x => x.Description).IsRequired().HasMaxLength(500);
 
-            builder.Property(x => x.CrimeCriminals).IsRequired();
+            builder.HasMany(x => x.CrimeCriminals).WithOne(x => x.Crime).HasForeignKey(x => x.CriminalID).IsRequired();
+            builder.HasMany(x => x.CrimeVictims).WithOne(x => x.Crime).HasForeignKey(x => x.VictimID);
         }
     }
 }

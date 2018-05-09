@@ -5,23 +5,15 @@ using static CriminalDB.Persistence.Utilities.GenericParser;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CriminalDB.Persistence.Context;
 
 namespace CriminalDB.Persistence.Utilities
 {
     public class CrimeForm : ICrimeForm
     {
-        private DbContext _context;
-
-        public CrimeForm(DbContext context)
-        {
-            _context = context;
-        }
-
-        #region Adding
-
         public void AddCrime()
         {
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 int amount;
                 Crime crime = new Crime();
@@ -65,8 +57,8 @@ namespace CriminalDB.Persistence.Utilities
                     crime.CrimeVictims.Add(crimeVictim);
 
                     //Adding to databse
-                    //unitOfWork.VictimRepository.Add(victim);
-                    //unitOfWork.CrimeVictimRepository.Add(crimeVictim);
+                    unitOfWork.VictimRepository.Add(victim);
+                    unitOfWork.CrimeVictimRepository.Add(crimeVictim);
                 }
 
                 //Add data from lists to database    
@@ -88,7 +80,7 @@ namespace CriminalDB.Persistence.Utilities
             return crime;
         }
         
-        private T Info<T>(T person) where T : Person
+        private TEntity Info<TEntity>(TEntity person) where TEntity : Person
         {
             DateTime time = DateTime.Now;
             Console.WriteLine("First name:");
@@ -122,19 +114,19 @@ namespace CriminalDB.Persistence.Utilities
             person.Address = Console.ReadLine();
             Console.WriteLine("Photo:");
             person.Photo = Console.ReadLine();
-            //Console.WriteLine("Description:");
-            //person.Description = Console.ReadLine();
+            var criminal = person as Criminal;
+            if(criminal != null)
+            {
+                Console.WriteLine("Description:");
+                criminal.Description = Console.ReadLine();
+            }
             return person;
         }
-
-        #endregion
-
-        #region Removing
 
         public void Remove<TEntity>() where TEntity : class
         {
             int id = ParseValue<int>(int.TryParse, "Crime ID:");
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 var entity = unitOfWork.Repository<TEntity>().Get(id);
                 if (entity == null)
@@ -150,7 +142,7 @@ namespace CriminalDB.Persistence.Utilities
 
         public void RemoveAll<TEntity>() where TEntity : class
         {
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 var entities = unitOfWork.Repository<TEntity>().GetAll();
                 unitOfWork.Repository<TEntity>().RemoveRange(entities);
@@ -158,7 +150,5 @@ namespace CriminalDB.Persistence.Utilities
             }
             Console.WriteLine("Done.");
         }
-
-        #endregion
     }
 }

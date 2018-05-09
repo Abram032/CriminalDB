@@ -7,16 +7,11 @@ using System.Text;
 
 namespace CriminalDB.Persistence.Configuration
 {
-    public class VictimConfiguration : PersonConfiguration
+    public class VictimConfiguration : PersonConfiguration<Victim>
     {
-        public VictimConfiguration() : base()
+        public override void Configure(EntityTypeBuilder<Victim> builder)
         {
-
-        }
-
-        public void Configure(EntityTypeBuilder<Victim> builder)
-        {
-            
+            base.Configure(builder);
         }
     }
 }

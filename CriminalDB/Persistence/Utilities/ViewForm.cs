@@ -6,26 +6,18 @@ using static CriminalDB.Persistence.Utilities.GenericParser;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using CriminalDB.Persistence.Context;
 
 namespace CriminalDB.Persistence.Utilities
 {
     public class ViewForm : IViewForm
     {
-        private DbContext _context;
-
-        public ViewForm(DbContext context)
-        {
-            _context = context;
-        }
-
-        #region Crimes
-
         public void Crime(bool showCriminals = false, bool showVictims = false)
         {
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 Crime crime = null;
-                int id = ParseValue<int>(int.TryParse, "Criminal ID:");
+                int id = ParseValue<int>(int.TryParse, "Crime ID:");
                 if (showCriminals == false && showVictims == false)
                     crime = unitOfWork.CrimeRepository.Get(id);
                 else if (showCriminals == true && showVictims == false)
@@ -37,7 +29,7 @@ namespace CriminalDB.Persistence.Utilities
                     Console.WriteLine("Crime ID not found");
                     return;
                 }
-                Console.WriteLine("ID: " + crime.CrimeID);
+                Console.WriteLine("ID: " + crime.ID);
                 Console.WriteLine("Type: " + crime.Type);
                 Console.WriteLine("Time: " + crime.Time);
                 Console.WriteLine("Location: " + crime.Location);
@@ -64,7 +56,7 @@ namespace CriminalDB.Persistence.Utilities
 
         public void AllCrimes(bool showCriminals = false, bool showVictims = false)
         {
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 IEnumerable<Crime> crimes = null;
                 if (showCriminals == false && showVictims == false)
@@ -77,7 +69,7 @@ namespace CriminalDB.Persistence.Utilities
                     return;
                 foreach (var crime in crimes)
                 {
-                    Console.WriteLine("ID: " + crime.CrimeID);
+                    Console.WriteLine("ID: " + crime.ID);
                     Console.WriteLine("Type: " + crime.Type);
                     Console.WriteLine("Time: " + crime.Time);
                     Console.WriteLine("Location: " + crime.Location);
@@ -103,128 +95,135 @@ namespace CriminalDB.Persistence.Utilities
             Console.WriteLine("Done.");
         }
 
-        #endregion
-
-        #region Criminals
-
-        public void Criminal(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false)
+        public void Person<TEntity>(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false) where TEntity : Person
         {
-            int id = ParseValue<int>(int.TryParse, "Criminal ID:");
-            using (var unitOfWork = new UnitOfWork(_context))
+            int id = ParseValue<int>(int.TryParse, "ID:");
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
-                var criminal = unitOfWork.CriminalRepository.Get(id);
-                if (criminal == null)
+                var person = unitOfWork.Repository<TEntity>().Get(id);
+                if (person == null)
                 {
-                    Console.WriteLine("No criminal with such id");
+                    Console.WriteLine("No person with such id");
                     return;
                 }
-                Console.WriteLine("ID: " + criminal.ID);
-                Console.WriteLine("Name: " + criminal.FirstName + " " + criminal.LastName);
+                Console.WriteLine();
+                Console.WriteLine("ID: " + person.ID);
+                Console.WriteLine("Name: " + person.FirstName + " " + person.LastName);
                 if (showDetails)
                 {
-
+                    Console.WriteLine("Gender: " + person.Gender);
+                    Console.WriteLine("Nationality: " + person.Nationality);
+                    Console.WriteLine("Date of birth: " + person.DateOfBirth);
+                    Console.WriteLine("Height: " + person.Height);
+                    Console.WriteLine("Weight: " + person.Weight);
+                    Console.WriteLine("Address: " + person.Address);
+                    Console.WriteLine("Photo: " + person.Photo);
+                    var criminal = person as Criminal;
+                    if (criminal != null)
+                        Console.WriteLine("Description: " + criminal.Description);
                 }
                 if (showCrimes)
                 {
-
-                }
-                if (showCrimesDetails)
-                {
-
+                    Console.WriteLine("Crimes:");
+                    var criminal = person as Criminal;
+                    if (criminal != null)
+                    {
+                        foreach (var crime in criminal.Crimes)
+                        {
+                            Console.WriteLine("ID: " + crime.CrimeID);
+                            Console.WriteLine("Type: " + crime.Crime.Type);
+                            if (showCrimesDetails)
+                            {
+                                Console.WriteLine("Time: " + crime.Crime.Time);
+                                Console.WriteLine("Location: " + crime.Crime.Location);
+                                Console.WriteLine("Description: " + crime.Crime.Description);
+                            }
+                        }
+                    }
+                    var victim = person as Victim;
+                    if (victim != null)
+                    {
+                        foreach (var crime in victim.Crimes)
+                        {
+                            Console.WriteLine("ID: " + crime.CrimeID);
+                            Console.WriteLine("Type: " + crime.Crime.Type);
+                            if (showCrimesDetails)
+                            {
+                                Console.WriteLine("Time: " + crime.Crime.Time);
+                                Console.WriteLine("Location: " + crime.Crime.Location);
+                                Console.WriteLine("Description: " + crime.Crime.Description);
+                            }
+                        }
+                    }
                 }
                 unitOfWork.Complete();
             }
+            Console.WriteLine();
             Console.WriteLine("Done.");
         }
 
-        public void AllCriminals(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false)
+        public void AllPeople<TEntity>(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false) where TEntity : Person
         {
-            using (var unitOfWork = new UnitOfWork(_context))
+            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
-                var criminals = unitOfWork.CriminalRepository.GetAll();
-                foreach (var criminal in criminals)
+                var people = unitOfWork.Repository<TEntity>().GetAll();
+                foreach (var person in people)
                 {
-                    Console.WriteLine("ID: " + criminal.ID);
-                    Console.WriteLine("Name: " + criminal.FirstName + " " + criminal.LastName);
+                    Console.WriteLine();
+                    Console.WriteLine("ID: " + person.ID);
+                    Console.WriteLine("Name: " + person.FirstName + " " + person.LastName);
                     if (showDetails)
                     {
-
+                        Console.WriteLine("Gender: " + person.Gender);
+                        Console.WriteLine("Nationality: " + person.Nationality);
+                        Console.WriteLine("Date of birth: " + person.DateOfBirth);
+                        Console.WriteLine("Height: " + person.Height);
+                        Console.WriteLine("Weight: " + person.Weight);
+                        Console.WriteLine("Address: " + person.Address);
+                        Console.WriteLine("Photo: " + person.Photo);
+                        var criminal = person as Criminal;
+                        if (criminal != null)
+                            Console.WriteLine("Description: " + criminal.Description);
                     }
                     if (showCrimes)
                     {
-
-                    }
-                    if (showCrimesDetails)
-                    {
-
-                    }
-                }
-                unitOfWork.Complete();
-            }
-            Console.WriteLine("Done.");
-        }
-
-        #endregion
-
-        #region Victims
-
-        public void Victim(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false)
-        {
-            int id = ParseValue<int>(int.TryParse, "Victim ID:");
-            using (var unitOfWork = new UnitOfWork(_context))
-            {
-                var criminal = unitOfWork.CriminalRepository.Get(id);
-                if (criminal == null)
-                {
-                    Console.WriteLine("No victim with such id");
-                    return;
-                }
-                Console.WriteLine("ID: " + criminal.ID);
-                Console.WriteLine("Name: " + criminal.FirstName + " " + criminal.LastName);
-                if (showDetails)
-                {
-
-                }
-                if (showCrimes)
-                {
-
-                }
-                if (showCrimesDetails)
-                {
-
-                }
-                unitOfWork.Complete();
-            }
-            Console.WriteLine("Done.");
-        }
-
-        public void AllVictims(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false)
-        {
-            using (var unitOfWork = new UnitOfWork(_context))
-            {
-                var criminals = unitOfWork.CriminalRepository.GetAll();
-                foreach (var criminal in criminals)
-                {
-                    Console.WriteLine("ID: " + criminal.ID);
-                    Console.WriteLine("Name: " + criminal.FirstName + " " + criminal.LastName);
-                    if (showDetails)
-                    {
-
-                    }
-                    if (showCrimes)
-                    {
-
-                    }
-                    if (showCrimesDetails)
-                    {
-
+                        Console.WriteLine("Crimes:");
+                        var criminal = person as Criminal;
+                        if (criminal != null)
+                        {
+                            foreach (var crime in criminal.Crimes)
+                            {
+                                Console.WriteLine("ID: " + crime.CrimeID);
+                                Console.WriteLine("Type: " + crime.Crime.Type);
+                                if (showCrimesDetails)
+                                {
+                                    Console.WriteLine("Time: " + crime.Crime.Time);
+                                    Console.WriteLine("Location: " + crime.Crime.Location);
+                                    Console.WriteLine("Description: " + crime.Crime.Description);
+                                }
+                            }
+                        }
+                        var victim = person as Victim;
+                        if (victim != null)
+                        {
+                            foreach (var crime in victim.Crimes)
+                            {
+                                Console.WriteLine("ID: " + crime.CrimeID);
+                                Console.WriteLine("Type: " + crime.Crime.Type);
+                                if (showCrimesDetails)
+                                {
+                                    Console.WriteLine("Time: " + crime.Crime.Time);
+                                    Console.WriteLine("Location: " + crime.Crime.Location);
+                                    Console.WriteLine("Description: " + crime.Crime.Description);
+                                }
+                            }
+                        }
                     }
                 }
                 unitOfWork.Complete();
             }
+            Console.WriteLine();
             Console.WriteLine("Done.");
         }
-
-        #endregion
     }
 }

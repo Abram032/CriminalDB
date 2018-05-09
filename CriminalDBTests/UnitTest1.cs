@@ -20,8 +20,8 @@ namespace CriminalDBTests
             person.Gender = Enums.Gender.Male;
             person.Nationality = "Uganda";
             person.DateOfBirth = new DateTime();
-            person.Height = 1.91;
-            person.Weight = 89.4;
+            person.Height = 1.91f;
+            person.Weight = 89.4f;
             person.Photo = "Zulul";
             person.Address = "4House";
             #endregion
@@ -36,8 +36,8 @@ namespace CriminalDBTests
             person.Gender = Enums.Gender.Male;
             person.Nationality = "Uganda";
             person.DateOfBirth = new DateTime();
-            person.Height = 1.91;
-            person.Weight = 89.4;
+            person.Height = 1.91f;
+            person.Weight = 89.4f;
             person.Photo = "Zulul";
             person.Address = "4House";
             #endregion

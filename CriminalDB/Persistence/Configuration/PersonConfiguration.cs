@@ -7,11 +7,11 @@ using System.Text;
 
 namespace CriminalDB.Persistence.Configuration
 {
-    public abstract class PersonConfiguration : IEntityTypeConfiguration<Person>
+    public abstract class PersonConfiguration<TEntity> : EntityConfiguration<TEntity> where TEntity : Person
     {
-        public virtual void Configure(EntityTypeBuilder<Person> builder)
+        public override void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasKey(x => x.ID);
+            base.Configure(builder);
             builder.Property(x => x.FirstName).IsRequired().HasMaxLength(50);
             builder.Property(x => x.LastName).IsRequired().HasMaxLength(50);
             builder.Property(x => x.Gender).IsRequired();

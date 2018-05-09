@@ -26,7 +26,7 @@ namespace CriminalDB.Persistence.Repository
             return CriminalContext.Crimes
                 .Include(x => x.CrimeCriminals)
                 .ThenInclude(x => x.Criminal)
-                .Where(x => x.CrimeID == id)
+                .Where(x => x.ID == id)
                 .SingleOrDefault();
         }
 
@@ -37,13 +37,13 @@ namespace CriminalDB.Persistence.Repository
                 .ThenInclude(x => x.Criminal)
                 .Include(x => x.CrimeVictims)
                 .ThenInclude(x => x.Victim)
-                .Where(x => x.CrimeID == id)
+                .Where(x => x.ID == id)
                 .SingleOrDefault();
         }
 
         public IEnumerable<Crime> GetCrimes()
         {
-            return CriminalContext.Crimes.OrderByDescending(x => x.CrimeID).ToList();
+            return CriminalContext.Crimes.ToList();
         }
 
         public IEnumerable<Crime> GetCrimesWithCriminals()
@@ -51,7 +51,7 @@ namespace CriminalDB.Persistence.Repository
             return CriminalContext.Crimes.
                 Include(x => x.CrimeCriminals)
                 .ThenInclude(x => x.Criminal)
-                .OrderBy(x => x.CrimeID)
+                .OrderBy(x => x.ID)
                 .ToList();
         }
 
@@ -62,7 +62,7 @@ namespace CriminalDB.Persistence.Repository
                 .ThenInclude(x => x.Criminal)
                 .Include(x => x.CrimeVictims)
                 .ThenInclude(x => x.Victim)
-                .OrderBy(x => x.CrimeID)
+                .OrderBy(x => x.ID)
                 .ToList();
         }
     }

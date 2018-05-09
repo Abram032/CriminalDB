@@ -11,9 +11,9 @@ namespace CriminalDB.Persistence.Configuration
     {
         public void Configure(EntityTypeBuilder<CrimeCriminal> builder)
         {
-            builder.HasKey(x => new { x.CrimeID, x.ID });
+            builder.HasKey(x => new { x.CrimeID, x.CriminalID });
 
-            builder.HasOne(c => c.Criminal).WithMany(c => c.Crimes).HasForeignKey(c => c.ID);
+            builder.HasOne(c => c.Criminal).WithMany(c => c.Crimes).HasForeignKey(c => c.CriminalID);
             builder.HasOne(c => c.Crime).WithMany(c => c.CrimeCriminals).HasForeignKey(c => c.CrimeID);
         }
     }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace CriminalDB.Migrations
@@ -22,23 +21,24 @@ namespace CriminalDB.Migrations
 
             modelBuilder.Entity("CriminalDB.Core.DataModels.Crime", b =>
                 {
-                    b.Property<int>("CrimeID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(250);
+                        .HasMaxLength(500);
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
-                    b.Property<DateTime>("Time");
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("DateTime");
 
                     b.Property<string>("Type")
                         .IsRequired();
 
-                    b.HasKey("CrimeID");
+                    b.HasKey("ID");
 
                     b.ToTable("Crimes");
                 });
@@ -47,11 +47,11 @@ namespace CriminalDB.Migrations
                 {
                     b.Property<int>("CrimeID");
 
-                    b.Property<int>("ID");
+                    b.Property<int>("CriminalID");
 
-                    b.HasKey("CrimeID", "ID");
+                    b.HasKey("CrimeID", "CriminalID");
 
-                    b.HasIndex("ID");
+                    b.HasIndex("CriminalID");
 
                     b.ToTable("CrimeCriminals");
                 });
@@ -60,11 +60,11 @@ namespace CriminalDB.Migrations
                 {
                     b.Property<int>("CrimeID");
 
-                    b.Property<int>("ID");
+                    b.Property<int>("VictimID");
 
-                    b.HasKey("CrimeID", "ID");
+                    b.HasKey("CrimeID", "VictimID");
 
-                    b.HasIndex("ID");
+                    b.HasIndex("VictimID");
 
                     b.ToTable("CrimeVictims");
                 });
@@ -76,12 +76,14 @@ namespace CriminalDB.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
-                    b.Property<DateTime>("DateOfBirth");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("Date");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(250);
+                        .IsRequired()
+                        .HasMaxLength(500);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -89,7 +91,8 @@ namespace CriminalDB.Migrations
 
                     b.Property<int>("Gender");
 
-                    b.Property<double>("Height");
+                    b.Property<float>("Height")
+                        .HasColumnType("Float");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -103,7 +106,8 @@ namespace CriminalDB.Migrations
                         .IsRequired()
                         .HasMaxLength(250);
 
-                    b.Property<double>("Weight");
+                    b.Property<float>("Weight")
+                        .HasColumnType("Float");
 
                     b.HasKey("ID");
 
@@ -117,9 +121,10 @@ namespace CriminalDB.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
-                    b.Property<DateTime>("DateOfBirth");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("Date");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -127,7 +132,8 @@ namespace CriminalDB.Migrations
 
                     b.Property<int>("Gender");
 
-                    b.Property<double>("Height");
+                    b.Property<float>("Height")
+                        .HasColumnType("Float");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -141,7 +147,8 @@ namespace CriminalDB.Migrations
                         .IsRequired()
                         .HasMaxLength(250);
 
-                    b.Property<double>("Weight");
+                    b.Property<float>("Weight")
+                        .HasColumnType("Float");
 
                     b.HasKey("ID");
 
@@ -157,7 +164,7 @@ namespace CriminalDB.Migrations
 
                     b.HasOne("CriminalDB.Core.DataModels.Criminal", "Criminal")
                         .WithMany("Crimes")
-                        .HasForeignKey("ID")
+                        .HasForeignKey("CriminalID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -170,7 +177,7 @@ namespace CriminalDB.Migrations
 
                     b.HasOne("CriminalDB.Core.DataModels.Victim", "Victim")
                         .WithMany("Crimes")
-                        .HasForeignKey("ID")
+                        .HasForeignKey("VictimID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
