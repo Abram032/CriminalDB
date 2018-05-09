@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace CriminalDB
 {
-    //TODO: Make new task that will take care of menu and options.
-    //Task InitDatabase = new Task();
-
+    //TODO: Get rid of data annotations and build constraints using Fluent API
+    //TODO: Validation
+    //TODO: IoC for Utilities
+    //TODO: Upgrade adding, add removing, add more view options
     class Program
     {
         public static void InitDatabase() => new InitDatabase().Main();

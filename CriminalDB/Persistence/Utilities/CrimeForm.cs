@@ -1,17 +1,27 @@
 ﻿using CriminalDB.Core.DataModels;
-using CriminalDB.Persistence.Context;
+using CriminalDB.Core.Utilities;
+using Microsoft.EntityFrameworkCore;
+using static CriminalDB.Persistence.Utilities.GenericParser;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static CriminalDB.Persistence.Utilities.GenericParser;
 
 namespace CriminalDB.Persistence.Utilities
 {
-    public class AddCrimes
+    public class CrimeForm : ICrimeForm
     {
-        public static void NewCrime()
+        private DbContext _context;
+
+        public CrimeForm(DbContext context)
         {
-            using (var unitOfWork = new UnitOfWork(new CriminalContext()))
+            _context = context;
+        }
+
+        #region Adding
+
+        public void AddCrime()
+        {
+            using (var unitOfWork = new UnitOfWork(_context))
             {
                 int amount;
                 Crime crime = new Crime();
@@ -26,7 +36,7 @@ namespace CriminalDB.Persistence.Utilities
                     Console.WriteLine();
                     Console.WriteLine("Criminal {0}:", i + 1);
                     Criminal criminal = new Criminal();
-                    criminal = CriminalInfo(criminal);
+                    criminal = Info(criminal);
 
                     //Adding to fields
                     CrimeCriminal crimeCriminal = new CrimeCriminal();
@@ -45,7 +55,7 @@ namespace CriminalDB.Persistence.Utilities
                     Console.WriteLine();
                     Console.WriteLine("Victim {0}:", i + 1);
                     Victim victim = new Victim();
-                    victim = VictimInfo(victim);
+                    victim = Info(victim);
 
                     //Adding to fields
                     CrimeVictim crimeVictim = new CrimeVictim();
@@ -65,7 +75,7 @@ namespace CriminalDB.Persistence.Utilities
             Console.WriteLine("Done.");
         }
 
-        private static Crime CrimeInfo(Crime crime)
+        private Crime CrimeInfo(Crime crime)
         {
             DateTime time = DateTime.Now;
             Console.WriteLine("Type:");
@@ -77,17 +87,17 @@ namespace CriminalDB.Persistence.Utilities
             crime.Description = Console.ReadLine();
             return crime;
         }
-
-        private static Criminal CriminalInfo(Criminal criminal)
+        
+        private T Info<T>(T person) where T : Person
         {
             DateTime time = DateTime.Now;
             Console.WriteLine("First name:");
-            criminal.FirstName = Console.ReadLine();
+            person.FirstName = Console.ReadLine();
             Console.WriteLine("Last name:");
-            criminal.LastName = Console.ReadLine();
+            person.LastName = Console.ReadLine();
             Console.WriteLine("Nationality:");
-            criminal.Nationality = Console.ReadLine();
-            criminal.DateOfBirth = time;
+            person.Nationality = Console.ReadLine();
+            person.DateOfBirth = time;
             //Gender
             while (true)
             {
@@ -95,63 +105,60 @@ namespace CriminalDB.Persistence.Utilities
                 string _gender = Console.ReadLine();
                 if (_gender.StartsWith('m'))
                 {
-                    criminal.Gender = Enums.Gender.Male;
+                    person.Gender = Enums.Gender.Male;
                     break;
                 }
                 else if (_gender.StartsWith('f'))
                 {
-                    criminal.Gender = Enums.Gender.Female;
+                    person.Gender = Enums.Gender.Female;
                     break;
                 }
                 else
                     Console.WriteLine("Invalid gender!");
             }
-            criminal.Height = ParseValue<double>(double.TryParse, "Height:");
-            criminal.Weight = ParseValue<double>(double.TryParse, "Weight:");
+            person.Height = ParseValue<float>(float.TryParse, "Height:");
+            person.Weight = ParseValue<float>(float.TryParse, "Weight:");
             Console.WriteLine("Address:");
-            criminal.Address = Console.ReadLine();
+            person.Address = Console.ReadLine();
             Console.WriteLine("Photo:");
-            criminal.Photo = Console.ReadLine();
-            Console.WriteLine("Description:");
-            criminal.Description = Console.ReadLine();
-            return criminal;
+            person.Photo = Console.ReadLine();
+            //Console.WriteLine("Description:");
+            //person.Description = Console.ReadLine();
+            return person;
         }
 
-        private static Victim VictimInfo(Victim victim)
+        #endregion
+
+        #region Removing
+
+        public void Remove<TEntity>() where TEntity : class
         {
-            DateTime time = DateTime.Now;
-            Console.WriteLine("First name:");
-            victim.FirstName = Console.ReadLine();
-            Console.WriteLine("Last name:");
-            victim.LastName = Console.ReadLine();
-            Console.WriteLine("Nationality:");
-            victim.Nationality = Console.ReadLine();
-            victim.DateOfBirth = time;
-            //Gender
-            while (true)
+            int id = ParseValue<int>(int.TryParse, "Crime ID:");
+            using (var unitOfWork = new UnitOfWork(_context))
             {
-                Console.WriteLine("Gender (m/f):");
-                string _gender = Console.ReadLine();
-                if (_gender.StartsWith('m'))
+                var entity = unitOfWork.Repository<TEntity>().Get(id);
+                if (entity == null)
                 {
-                    victim.Gender = Enums.Gender.Male;
-                    break;
+                    Console.WriteLine("No entity with such id.");
+                    return;
                 }
-                else if (_gender.StartsWith('f'))
-                {
-                    victim.Gender = Enums.Gender.Female;
-                    break;
-                }
-                else
-                    Console.WriteLine("Invalid gender!");
+                unitOfWork.Repository<TEntity>().Remove(entity);
+                unitOfWork.Complete();
             }
-            victim.Height = ParseValue<double>(double.TryParse, "Height:");
-            victim.Weight = ParseValue<double>(double.TryParse, "Weight:");
-            Console.WriteLine("Address:");
-            victim.Address = Console.ReadLine();
-            Console.WriteLine("Photo:");
-            victim.Photo = Console.ReadLine();
-            return victim;
+            Console.WriteLine("Done.");
         }
+
+        public void RemoveAll<TEntity>() where TEntity : class
+        {
+            using (var unitOfWork = new UnitOfWork(_context))
+            {
+                var entities = unitOfWork.Repository<TEntity>().GetAll();
+                unitOfWork.Repository<TEntity>().RemoveRange(entities);
+                unitOfWork.Complete();
+            }
+            Console.WriteLine("Done.");
+        }
+
+        #endregion
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CriminalDB.Core.Repository
 {
-    public interface ICrimeRepository : IRepository<Crime>
+    public interface ICrimeRepository : IGenericRepository<Crime>
     {
         IEnumerable<Crime> GetCrimes();
         IEnumerable<Crime> GetCrimesWithCriminals();

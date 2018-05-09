@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CriminalDB.Core.Repository
 {
-    public interface IVictimRepository : IRepository<Victim>
+    public interface IVictimRepository : IGenericRepository<Victim>
     {
         
     }

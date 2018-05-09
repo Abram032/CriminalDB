@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CriminalDB.Persistence.Context;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using static CriminalDB.Persistence.Utilities.AddCrimes;
@@ -12,8 +13,9 @@ namespace CriminalDB
     {
         public void Main()
         {
-            bool menu = true;
+            //CriminalContext context = new CriminalContext();
 
+            bool menu = true;
             Console.WriteLine("Press any key to start");
             while (menu)
             {

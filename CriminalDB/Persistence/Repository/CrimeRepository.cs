@@ -9,7 +9,7 @@ using CriminalDB.Persistence.Context;
 
 namespace CriminalDB.Persistence.Repository
 {
-    public class CrimeRepository : Repository<Crime>, ICrimeRepository
+    public class CrimeRepository : GenericRepository<Crime>, ICrimeRepository
     {
         public CrimeRepository(DbContext context) : base(context)
         {

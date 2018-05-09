@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CriminalDB.Persistence.Repository
 {
-    public class CrimeCriminalRepository : Repository<CrimeCriminal>, ICrimeCriminalRepository
+    public class CrimeCriminalRepository : GenericRepository<CrimeCriminal>, ICrimeCriminalRepository
     {
         public CrimeCriminalRepository(DbContext context) : base(context)
         {
