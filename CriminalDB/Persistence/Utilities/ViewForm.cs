@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using CriminalDB.Persistence.Context;
+using CriminalDB.Persistence.Repository;
 
 namespace CriminalDB.Persistence.Utilities
 {
@@ -52,6 +53,7 @@ namespace CriminalDB.Persistence.Utilities
                 unitOfWork.Complete();
             }
             Console.WriteLine("Done.");
+            Console.ReadKey();
         }
 
         public void AllCrimes(bool showCriminals = false, bool showVictims = false)
@@ -60,7 +62,7 @@ namespace CriminalDB.Persistence.Utilities
             {
                 IEnumerable<Crime> crimes = null;
                 if (showCriminals == false && showVictims == false)
-                    crimes = unitOfWork.CrimeRepository.GetCrimes();
+                    crimes = unitOfWork.Repository<Crime>().GetAll();
                 else if (showCriminals == true && showVictims == false)
                     crimes = unitOfWork.CrimeRepository.GetCrimesWithCriminals();
                 else
@@ -93,6 +95,7 @@ namespace CriminalDB.Persistence.Utilities
                 unitOfWork.Complete();
             }
             Console.WriteLine("Done.");
+            Console.ReadKey();
         }
 
         public void Person<TEntity>(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false) where TEntity : Person
@@ -103,7 +106,7 @@ namespace CriminalDB.Persistence.Utilities
                 var person = unitOfWork.Repository<TEntity>().Get(id);
                 if (person == null)
                 {
-                    Console.WriteLine("No person with such id");
+                    Console.WriteLine("No person with such id.");
                     return;
                 }
                 Console.WriteLine();
@@ -128,38 +131,40 @@ namespace CriminalDB.Persistence.Utilities
                     var criminal = person as Criminal;
                     if (criminal != null)
                     {
-                        foreach (var crime in criminal.Crimes)
+                        var _criminal = unitOfWork.CriminalRepository.GetCriminalWithCrimes(criminal.ID);
+                        foreach (var crime in _criminal.Crimes.Select(x => x.Crime))
                         {
-                            Console.WriteLine("ID: " + crime.CrimeID);
-                            Console.WriteLine("Type: " + crime.Crime.Type);
+                            Console.WriteLine("ID: " + crime.ID);
+                            Console.WriteLine("Type: " + crime.Type);
                             if (showCrimesDetails)
                             {
-                                Console.WriteLine("Time: " + crime.Crime.Time);
-                                Console.WriteLine("Location: " + crime.Crime.Location);
-                                Console.WriteLine("Description: " + crime.Crime.Description);
+                                Console.WriteLine("Time: " + crime.Time);
+                                Console.WriteLine("Location: " + crime.Location);
+                                Console.WriteLine("Description: " + crime.Description);
                             }
                         }
                     }
                     var victim = person as Victim;
                     if (victim != null)
                     {
-                        foreach (var crime in victim.Crimes)
+                        var _victim = unitOfWork.VictimRepository.GetVictimWithCrimes(victim.ID);
+                        foreach (var crime in _victim.Crimes.Select(x => x.Crime))
                         {
-                            Console.WriteLine("ID: " + crime.CrimeID);
-                            Console.WriteLine("Type: " + crime.Crime.Type);
+                            Console.WriteLine("ID: " + crime.ID);
+                            Console.WriteLine("Type: " + crime.Type);
                             if (showCrimesDetails)
                             {
-                                Console.WriteLine("Time: " + crime.Crime.Time);
-                                Console.WriteLine("Location: " + crime.Crime.Location);
-                                Console.WriteLine("Description: " + crime.Crime.Description);
+                                Console.WriteLine("Time: " + crime.Time);
+                                Console.WriteLine("Location: " + crime.Location);
+                                Console.WriteLine("Description: " + crime.Description);
                             }
                         }
                     }
                 }
                 unitOfWork.Complete();
             }
-            Console.WriteLine();
             Console.WriteLine("Done.");
+            Console.ReadKey();
         }
 
         public void AllPeople<TEntity>(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false) where TEntity : Person
@@ -191,30 +196,32 @@ namespace CriminalDB.Persistence.Utilities
                         var criminal = person as Criminal;
                         if (criminal != null)
                         {
-                            foreach (var crime in criminal.Crimes)
+                            var _criminal = unitOfWork.CriminalRepository.GetCriminalWithCrimes(criminal.ID);
+                            foreach (var crime in _criminal.Crimes.Select(x => x.Crime))
                             {
-                                Console.WriteLine("ID: " + crime.CrimeID);
-                                Console.WriteLine("Type: " + crime.Crime.Type);
+                                Console.WriteLine("ID: " + crime.ID);
+                                Console.WriteLine("Type: " + crime.Type);
                                 if (showCrimesDetails)
                                 {
-                                    Console.WriteLine("Time: " + crime.Crime.Time);
-                                    Console.WriteLine("Location: " + crime.Crime.Location);
-                                    Console.WriteLine("Description: " + crime.Crime.Description);
+                                    Console.WriteLine("Time: " + crime.Time);
+                                    Console.WriteLine("Location: " + crime.Location);
+                                    Console.WriteLine("Description: " + crime.Description);
                                 }
                             }
                         }
                         var victim = person as Victim;
                         if (victim != null)
                         {
-                            foreach (var crime in victim.Crimes)
+                            var _victim = unitOfWork.VictimRepository.GetVictimWithCrimes(victim.ID);
+                            foreach (var crime in _victim.Crimes.Select(x => x.Crime))
                             {
-                                Console.WriteLine("ID: " + crime.CrimeID);
-                                Console.WriteLine("Type: " + crime.Crime.Type);
+                                Console.WriteLine("ID: " + crime.ID);
+                                Console.WriteLine("Type: " + crime.Type);
                                 if (showCrimesDetails)
                                 {
-                                    Console.WriteLine("Time: " + crime.Crime.Time);
-                                    Console.WriteLine("Location: " + crime.Crime.Location);
-                                    Console.WriteLine("Description: " + crime.Crime.Description);
+                                    Console.WriteLine("Time: " + crime.Time);
+                                    Console.WriteLine("Location: " + crime.Location);
+                                    Console.WriteLine("Description: " + crime.Description);
                                 }
                             }
                         }
@@ -222,8 +229,8 @@ namespace CriminalDB.Persistence.Utilities
                 }
                 unitOfWork.Complete();
             }
-            Console.WriteLine();
             Console.WriteLine("Done.");
+            Console.ReadKey();
         }
     }
 }

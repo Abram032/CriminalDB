@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 namespace CriminalDB
 {
     //TODO: Validation
-    //TODO: Upgrade adding
-    //TODO: Add more functions for custom repositories and use them for viewing
+    //TODO: Update adding if UoW stores references instead of object copies
+    //TODO: Add Date Time insertion and update seeder with random date generator
+    //TODO: Datetime parser
     class Program
     {
         public static void InitDatabase() => new InitDatabase().Main();

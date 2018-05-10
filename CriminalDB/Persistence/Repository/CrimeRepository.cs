@@ -41,10 +41,10 @@ namespace CriminalDB.Persistence.Repository
                 .SingleOrDefault();
         }
 
-        public IEnumerable<Crime> GetCrimes()
-        {
-            return CriminalContext.Crimes.ToList();
-        }
+        // public IEnumerable<Crime> GetCrimes()
+        // {
+        //     return CriminalContext.Crimes.ToList();
+        // }
 
         public IEnumerable<Crime> GetCrimesWithCriminals()
         {

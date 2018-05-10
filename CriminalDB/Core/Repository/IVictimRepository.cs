@@ -7,6 +7,7 @@ namespace CriminalDB.Core.Repository
 {
     public interface IVictimRepository : IGenericRepository<Victim>
     {
-        
+        Victim GetVictimWithCrimes(int id);
+        IEnumerable<Victim> GetVictimsWithCrimes();
     }
 }

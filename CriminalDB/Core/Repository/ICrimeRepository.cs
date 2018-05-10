@@ -7,7 +7,7 @@ namespace CriminalDB.Core.Repository
 {
     public interface ICrimeRepository : IGenericRepository<Crime>
     {
-        IEnumerable<Crime> GetCrimes();
+        //IEnumerable<Crime> GetCrimes();
         IEnumerable<Crime> GetCrimesWithCriminals();
         IEnumerable<Crime> GetCrimesWithCriminalsAndVictims();
         Crime GetCrimeWithCriminals(int id);

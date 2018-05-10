@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static CriminalDB.Persistence.Utilities.CommandPrompt;
 using System.Text;
 
 namespace CriminalDB.Persistence.Utilities
@@ -10,8 +11,7 @@ namespace CriminalDB.Persistence.Utilities
         {
             while(true)
             {
-                Console.WriteLine(message);
-                string value = Console.ReadLine();
+                string value = Input(message);
                 if(handler(value, out T result))
                     return result;
                 else

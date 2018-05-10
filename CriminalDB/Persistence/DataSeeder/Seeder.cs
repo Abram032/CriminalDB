@@ -16,6 +16,8 @@ namespace CriminalDB.Persistence.DataSeeder
 
             for (int i = 0; i < records; i++)
             {
+                Console.Clear();
+                Console.WriteLine("Seeding database: {0}/{1}", i+1, records);
                 using (var unitOfWork = new UnitOfWork(new CriminalContext()))
                 {
                     Crime crime = crimeSeeder.GetRandomCrimeSeed();
@@ -31,8 +33,8 @@ namespace CriminalDB.Persistence.DataSeeder
                         criminal.Crimes.Add(crimeCriminal);
                         crime.CrimeCriminals.Add(crimeCriminal);
                         //Adding to databses
-                        unitOfWork.CriminalRepository.Add(criminal);
-                        unitOfWork.CrimeCriminalRepository.Add(crimeCriminal);
+                        unitOfWork.Repository<Criminal>().Add(criminal);
+                        unitOfWork.Repository<CrimeCriminal>().Add(crimeCriminal);
                     }
                     int victimAmount = GetRandomInt(1, 5);
                     for (int va = 0; va < victimAmount; va++)
@@ -45,8 +47,8 @@ namespace CriminalDB.Persistence.DataSeeder
                         victim.Crimes.Add(crimeVictim);
                         crime.CrimeVictims.Add(crimeVictim);
                         //Adding to databse
-                        unitOfWork.VictimRepository.Add(victim);
-                        unitOfWork.CrimeVictimRepository.Add(crimeVictim);
+                        unitOfWork.Repository<Victim>().Add(victim);
+                        unitOfWork.Repository<CrimeVictim>().Add(crimeVictim);
                     }
                     unitOfWork.Complete();
                 }

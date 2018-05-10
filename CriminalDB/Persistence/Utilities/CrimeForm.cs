@@ -2,6 +2,7 @@
 using CriminalDB.Core.Utilities;
 using Microsoft.EntityFrameworkCore;
 using static CriminalDB.Persistence.Utilities.GenericParser;
+using static CriminalDB.Persistence.Utilities.CommandPrompt;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,29 +26,41 @@ namespace CriminalDB.Persistence.Utilities
                 amount = ParseValue<int>(int.TryParse, "How many criminals?");
                 for (int i = 0; i < amount; i++)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("Criminal {0}:", i + 1);
                     Criminal criminal = new Criminal();
-                    criminal = Info(criminal);
-
-                    //Adding to fields
                     CrimeCriminal crimeCriminal = new CrimeCriminal();
+                    if(QuestionLoop("Is criminal in database? (y/n)"))
+                    {
+                        int id = ParseValue<int>(int.TryParse, "Criminal ID: ");
+                        criminal = unitOfWork.Repository<Criminal>().Get(id);                       
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Criminal {0}:", i + 1);
+                        criminal = Info(criminal);
+                        unitOfWork.CriminalRepository.Add(criminal);
+                    }
                     crimeCriminal.Criminal = criminal;
                     crimeCriminal.Crime = crime;
                     criminal.Crimes.Add(crimeCriminal);
                     crime.CrimeCriminals.Add(crimeCriminal);
-
-                    //Adding to databse
-                    unitOfWork.CriminalRepository.Add(criminal);
-                    unitOfWork.CrimeCriminalRepository.Add(crimeCriminal);
+                    unitOfWork.Repository<CrimeCriminal>().Add(crimeCriminal);
                 }
                 amount = ParseValue<int>(int.TryParse, "How many victims?");
                 for (int i = 0; i < amount; i++)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("Victim {0}:", i + 1);
                     Victim victim = new Victim();
-                    victim = Info(victim);
+                    if(QuestionLoop("Is criminal in database? (y/n)"))
+                    {
+                        int id = ParseValue<int>(int.TryParse, "Victim ID: ");
+                        victim = unitOfWork.Repository<Victim>().Get(id);
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Victim {0}:", i + 1);
+                        victim = Info(victim);
+                    }
 
                     //Adding to fields
                     CrimeVictim crimeVictim = new CrimeVictim();
@@ -58,7 +71,7 @@ namespace CriminalDB.Persistence.Utilities
 
                     //Adding to databse
                     unitOfWork.VictimRepository.Add(victim);
-                    unitOfWork.CrimeVictimRepository.Add(crimeVictim);
+                    unitOfWork.Repository<CrimeVictim>().Add(crimeVictim);
                 }
 
                 //Add data from lists to database    
@@ -70,31 +83,24 @@ namespace CriminalDB.Persistence.Utilities
         private Crime CrimeInfo(Crime crime)
         {
             DateTime time = DateTime.Now;
-            Console.WriteLine("Type:");
-            crime.Type = Console.ReadLine();
+            crime.Type = Input("Type:");
             crime.Time = time;
-            Console.WriteLine("Location:");
-            crime.Location = Console.ReadLine();
-            Console.WriteLine("Description:");
-            crime.Description = Console.ReadLine();
+            crime.Location = Input("Location:");
+            crime.Description = Input("Description:");
             return crime;
         }
         
         private TEntity Info<TEntity>(TEntity person) where TEntity : Person
         {
             DateTime time = DateTime.Now;
-            Console.WriteLine("First name:");
-            person.FirstName = Console.ReadLine();
-            Console.WriteLine("Last name:");
-            person.LastName = Console.ReadLine();
-            Console.WriteLine("Nationality:");
-            person.Nationality = Console.ReadLine();
+            person.FirstName = Input("First Name:");
+            person.LastName = Input("Last Name:");
+            person.Nationality = Input("Nationality:");
             person.DateOfBirth = time;
             //Gender
             while (true)
             {
-                Console.WriteLine("Gender (m/f):");
-                string _gender = Console.ReadLine();
+                string _gender = Input("Gender (m/f):");
                 if (_gender.StartsWith('m'))
                 {
                     person.Gender = Enums.Gender.Male;
@@ -110,16 +116,11 @@ namespace CriminalDB.Persistence.Utilities
             }
             person.Height = ParseValue<float>(float.TryParse, "Height:");
             person.Weight = ParseValue<float>(float.TryParse, "Weight:");
-            Console.WriteLine("Address:");
-            person.Address = Console.ReadLine();
-            Console.WriteLine("Photo:");
-            person.Photo = Console.ReadLine();
+            person.Address = Input("Address:");
+            person.Photo = Input("Photo:");
             var criminal = person as Criminal;
             if(criminal != null)
-            {
-                Console.WriteLine("Description:");
-                criminal.Description = Console.ReadLine();
-            }
+                criminal.Description = Input("Description:");
             return person;
         }
 
@@ -149,6 +150,20 @@ namespace CriminalDB.Persistence.Utilities
                 unitOfWork.Complete();
             }
             Console.WriteLine("Done.");
+        }
+
+        private bool QuestionLoop(string message)
+        {
+            while(true)
+            {
+                var result = Input(message);
+                if(result.Equals("y"))
+                    return true;
+                else if(result.Equals("n"))
+                    return false;
+                else
+                    Console.Write("Invalid option.");
+            }
         }
     }
 }

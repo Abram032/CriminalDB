@@ -19,7 +19,7 @@ namespace CriminalDB
             }
 
             Seeder seeder = new Seeder();
-            seeder.SeedDatabase();
+            seeder.SeedDatabase(50);
         }
     }
 }

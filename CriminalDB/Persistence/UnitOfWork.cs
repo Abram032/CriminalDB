@@ -15,9 +15,7 @@ namespace CriminalDB.Persistence
 
         public ICrimeRepository CrimeRepository { get; private set; }
         public ICriminalRepository CriminalRepository { get; private set; }
-        public ICrimeCriminalRepository CrimeCriminalRepository { get; private set; }
         public IVictimRepository VictimRepository { get; private set; }
-        public ICrimeVictimRepository CrimeVictimRepository { get; private set; }
 
         private Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
@@ -27,9 +25,7 @@ namespace CriminalDB.Persistence
 
             CrimeRepository = new CrimeRepository(_context);
             CriminalRepository = new CriminalRepository(_context);
-            CrimeCriminalRepository = new CrimeCriminalRepository(_context);
             VictimRepository = new VictimRepository(_context);
-            CrimeVictimRepository = new CrimeVictimRepository(_context);
         }
 
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class
