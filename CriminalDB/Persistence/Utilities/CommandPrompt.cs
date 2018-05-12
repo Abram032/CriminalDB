@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using CriminalDB.Core.Utilities;
 
 namespace CriminalDB.Persistence.Utilities
@@ -10,7 +11,8 @@ namespace CriminalDB.Persistence.Utilities
         {
             Console.WriteLine(message);
             Console.Write("> ");
-            return Console.ReadLine();
+            string result = new CultureInfo("en-US").TextInfo.ToTitleCase(Console.ReadLine());
+            return result;
         }
         
         public static string Input<T>(IEnumerable<T> messages)
@@ -18,7 +20,8 @@ namespace CriminalDB.Persistence.Utilities
             foreach(T message in messages)
                 Console.WriteLine(message);
             Console.Write("> ");
-            return Console.ReadLine();
+            string result = new CultureInfo("en-US").TextInfo.ToTitleCase(Console.ReadLine());
+            return result;
         }
     }
 }

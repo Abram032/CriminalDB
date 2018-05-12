@@ -7,7 +7,9 @@ namespace CriminalDB.Core.DataModels
 {
     public class Crime : Entity
     {
-        [Required(ErrorMessage = "Type is required!")]
+        [Required(ErrorMessage = "Type is required!"),
+        MinLength(1, ErrorMessage = "Type can't be empty!"),
+        MaxLength(50, ErrorMessage = "Type can't have more than 50 characters.")]
         public string Type { get; set; }
 
         [Required(ErrorMessage = "Date and time is required"), DataType(DataType.DateTime)]

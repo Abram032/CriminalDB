@@ -14,13 +14,15 @@ namespace CriminalDB.Persistence.Utilities
     public class CrimeForm : ICrimeForm
     {
 
+        private IGenericParser _parser;
         private IDateTimeParser _dateParser;
         private IEntityValidator _validator;
 
-        public CrimeForm(IDateTimeParser dateParser, IEntityValidator validator)
+        public CrimeForm(IDateTimeParser dateParser, IEntityValidator validator, IGenericParser parser)
         {
             _dateParser = dateParser;
             _validator = validator;
+            _parser = parser;
         }
         
         public void AddCrime()
@@ -35,14 +37,16 @@ namespace CriminalDB.Persistence.Utilities
                 List<CrimeVictim> crimeVictims = new List<CrimeVictim>();
                 crime = CrimeInfo(crime);
                 Console.WriteLine();
-                amount = ParseValue<int>(int.TryParse, "How many criminals?");
+                //Adding Crime to UoW
+                unitOfWork.Repository<Crime>().Add(crime);
+                amount = _parser.ParseValue<int>(int.TryParse, "How many criminals?");
                 for (int i = 0; i < amount; i++)
                 {
                     Criminal criminal = new Criminal();
                     CrimeCriminal crimeCriminal = new CrimeCriminal();
                     if(QuestionLoop("Is criminal in database? (y/n)"))
                     {
-                        int id = ParseValue<int>(int.TryParse, "Criminal ID: ");
+                        int id = _parser.ParseValue<int>(int.TryParse, "Criminal ID: ");
                         criminal = unitOfWork.Repository<Criminal>().Get(id);                       
                     }
                     else
@@ -50,6 +54,8 @@ namespace CriminalDB.Persistence.Utilities
                         Console.WriteLine();
                         Console.WriteLine("Criminal {0}:", i + 1);
                         criminal = Info(criminal);
+                        //Adding Criminal to UoW
+                        unitOfWork.Repository<Criminal>().Add(criminal);                        
                     }
                     //Connecting Criminal to Crime.
                     crimeCriminal.Criminal = criminal;
@@ -58,16 +64,18 @@ namespace CriminalDB.Persistence.Utilities
                     crime.CrimeCriminals.Add(crimeCriminal);
                     //Adding Criminal and CrimeCriminal to list.
                     criminals.Add(criminal);
-                    crimeCriminals.Add(crimeCriminal);
+                    crimeCriminals.Add(crimeCriminal);      
+                    //Adding CrimeCriminal to UoW
+                    unitOfWork.Repository<CrimeCriminal>().Add(crimeCriminal);      
                 }
-                amount = ParseValue<int>(int.TryParse, "How many victims?");
+                amount = _parser.ParseValue<int>(int.TryParse, "How many victims?");
                 for (int i = 0; i < amount; i++)
                 {
                     Victim victim = new Victim();
                     CrimeVictim crimeVictim = new CrimeVictim();
-                    if(QuestionLoop("Is criminal in database? (y/n)"))
+                    if(QuestionLoop("Is victim in database? (y/n)"))
                     {
-                        int id = ParseValue<int>(int.TryParse, "Victim ID: ");
+                        int id = _parser.ParseValue<int>(int.TryParse, "Victim ID: ");
                         victim = unitOfWork.Repository<Victim>().Get(id);
                     }
                     else
@@ -75,6 +83,8 @@ namespace CriminalDB.Persistence.Utilities
                         Console.WriteLine();
                         Console.WriteLine("Victim {0}:", i + 1);
                         victim = Info(victim);
+                        //Adding Victim to UoW
+                        unitOfWork.Repository<Victim>().Add(victim);  
                     }
                     //Connecting Victim to Crime.               
                     crimeVictim.Victim = victim;
@@ -84,27 +94,23 @@ namespace CriminalDB.Persistence.Utilities
                     //Adding Victim and CrimeVictim to list.
                     victims.Add(victim);
                     crimeVictims.Add(crimeVictim);
+                    //Adding CrimeVictim to UoW
+                    unitOfWork.Repository<CrimeVictim>().Add(crimeVictim);           
                 }
                 //Validation before adding!               
                 if(ValidateAll(crime, criminals, victims) == false)
                     Console.WriteLine("Error, validation failed!");
                 else
-                {
-                    unitOfWork.Repository<Crime>().Add(crime);
-                    unitOfWork.Repository<Criminal>().AddRange(criminals);
-                    unitOfWork.Repository<Victim>().AddRange(victims);
-                    unitOfWork.Repository<CrimeCriminal>().AddRange(crimeCriminals);
-                    unitOfWork.Repository<CrimeVictim>().AddRange(crimeVictims);
                     unitOfWork.Complete();
-                }
             }
             Console.WriteLine("Done.");
+            Console.ReadLine();
         }
 
         private Crime CrimeInfo(Crime crime)
         {
             crime.Type = Input("Type:");
-            crime.Time = _dateParser.Parse("DateTime format (DD-MM-YYYY HH:MM:SS) \nDate:");
+            crime.Time = _dateParser.Parse("DateTime format (DD-MM-YYYY HH:MM:SS) \nDate and time:");
             crime.Location = Input("Location:");
             crime.Description = Input("Description:");
             return crime;
@@ -115,17 +121,17 @@ namespace CriminalDB.Persistence.Utilities
             person.FirstName = Input("First Name:");
             person.LastName = Input("Last Name:");
             person.Nationality = Input("Nationality:");
-            person.DateOfBirth = _dateParser.Parse("DateTime format: DD-MM-YYYY \nDate:");
+            person.DateOfBirth = _dateParser.Parse("DateTime format: DD-MM-YYYY \nBirthday date:");
             //Gender
             while (true)
             {
                 string _gender = Input("Gender (m/f):");
-                if (_gender.StartsWith('m'))
+                if (_gender.StartsWith("m", true, null))
                 {
                     person.Gender = "Male";
                     break;
                 }
-                else if (_gender.StartsWith('f'))
+                else if (_gender.StartsWith("f", true, null))
                 {
                     person.Gender = "Female";
                     break;
@@ -133,8 +139,8 @@ namespace CriminalDB.Persistence.Utilities
                 else
                     Console.WriteLine("Invalid gender!");
             }
-            person.Height = ParseValue<float>(float.TryParse, "Height:");
-            person.Weight = ParseValue<float>(float.TryParse, "Weight:");
+            person.Height = _parser.ParseValue<float>(float.TryParse, "Height:");
+            person.Weight = _parser.ParseValue<float>(float.TryParse, "Weight:");
             person.Address = Input("Address:");
             person.Photo = Input("Photo:");
             var criminal = person as Criminal;
@@ -145,7 +151,7 @@ namespace CriminalDB.Persistence.Utilities
 
         public void Remove<TEntity>() where TEntity : class
         {
-            int id = ParseValue<int>(int.TryParse, "Crime ID:");
+            int id = _parser.ParseValue<int>(int.TryParse, "Crime ID:");
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 var entity = unitOfWork.Repository<TEntity>().Get(id);
@@ -176,9 +182,9 @@ namespace CriminalDB.Persistence.Utilities
             while(true)
             {
                 var result = Input(message);
-                if(result.Equals("y"))
+                if(result.StartsWith("y", true, null))
                     return true;
-                else if(result.Equals("n"))
+                else if(result.StartsWith("n", true, null))
                     return false;
                 else
                     Console.Write("Invalid option.");

@@ -53,6 +53,9 @@ namespace CriminalDB.Persistence.DataSeeder
             person.Weight = _randomGenerator.GetRandomInt(50, 130);
             person.DateOfBirth = _randomGenerator.GetRandomDate();
             person.Photo = "URL";
+            var criminal = person as Criminal;
+            if(criminal != null)
+                criminal.Description = "Test description.";
             return person;
         }
     }

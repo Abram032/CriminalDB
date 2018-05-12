@@ -13,12 +13,19 @@ namespace CriminalDB.Persistence.Utilities
 {
     public class ViewForm : IViewForm
     {
+        private IGenericParser _parser;
+
+        public ViewForm(IGenericParser parser)
+        {
+            _parser = parser;
+        }
+
         public void Crime(bool showCriminals = false, bool showVictims = false)
         {
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 Crime crime = null;
-                int id = ParseValue<int>(int.TryParse, "Crime ID:");
+                int id = _parser.ParseValue<int>(int.TryParse, "Crime ID:");
                 if (showCriminals == false && showVictims == false)
                     crime = unitOfWork.CrimeRepository.Get(id);
                 else if (showCriminals == true && showVictims == false)
@@ -100,7 +107,7 @@ namespace CriminalDB.Persistence.Utilities
 
         public void Person<TEntity>(bool showDetails = false, bool showCrimes = false, bool showCrimesDetails = false) where TEntity : Person
         {
-            int id = ParseValue<int>(int.TryParse, "ID:");
+            int id = _parser.ParseValue<int>(int.TryParse, "ID:");
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 var person = unitOfWork.Repository<TEntity>().Get(id);

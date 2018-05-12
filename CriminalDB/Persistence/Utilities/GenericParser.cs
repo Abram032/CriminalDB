@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using static CriminalDB.Persistence.Utilities.CommandPrompt;
 using System.Text;
+using CriminalDB.Core.Utilities;
 
 namespace CriminalDB.Persistence.Utilities
 {
-    public class GenericParser
+    public class GenericParser : IGenericParser
     {   
         /// <summary>
         /// Parses Value
         /// </summary>   
-        public static T ParseValue<T>(TryParseHandler<T> handler, string message = "") where T : struct
+        public T ParseValue<T>(Core.Utilities.TryParseHandler<T> handler, string message = "") where T : struct
         {
             while(true)
             {
@@ -21,9 +22,6 @@ namespace CriminalDB.Persistence.Utilities
                     Console.WriteLine("Invalid value");
             }
         }
-
-        public delegate bool TryParseHandler<T>(string value, out T result);
-
         //Usage:
         //var value = ParseValue<int>(int.TryParse, "message to show");
         //var value = ParseValue<double>(double.TryParse);

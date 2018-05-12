@@ -29,10 +29,10 @@ namespace CriminalDB.Core.DataModels
         [Required(ErrorMessage = "Date of birth is required!"), DataType(DataType.DateTime)]
         public DateTime DateOfBirth { get; set; }
 
-        [Required(ErrorMessage = "Height is required!"), Range(0, 300, ErrorMessage = "Height must be between 0 and 300.")]
+        [Required(ErrorMessage = "Height is required!"), Range(1f, 300f, ErrorMessage = "Height must be between 0 and 300.")]
         public float Height { get; set; }
 
-        [Required(ErrorMessage = "Weight is required!"), Range(0, 600, ErrorMessage = "Weight must be between 0 and 600.")]
+        [Required(ErrorMessage = "Weight is required!"), Range(1f, 600f, ErrorMessage = "Weight must be between 0 and 600.")]
         public float Weight { get; set; }
 
         [Required(ErrorMessage = "Address is required!"), 
@@ -40,7 +40,7 @@ namespace CriminalDB.Core.DataModels
         MinLength(1, ErrorMessage = "Address can't be empty")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Address is required!"), 
+        [Required(ErrorMessage = "Photo is required!"), 
         MaxLength(250, ErrorMessage = "Address can't be longer than 250 characters"), 
         MinLength(1, ErrorMessage = "Address can't be empty")]
         public string Photo { get; set; }

@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace CriminalDBTests
+namespace CriminalDBTests.OtherTests
 {
     public class CaseSensitivityTest
     {
