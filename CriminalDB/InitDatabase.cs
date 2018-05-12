@@ -1,4 +1,5 @@
-﻿using CriminalDB.Persistence.Context;
+﻿using CriminalDB.Core.DataSeeder;
+using CriminalDB.Persistence.Context;
 using CriminalDB.Persistence.DataSeeder;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,6 +10,14 @@ namespace CriminalDB
 {
     public class InitDatabase
     {
+        private ISeeder _seeder;
+        int _amount;
+
+        public InitDatabase(ISeeder seeder, int amount)
+        {
+            _seeder = seeder;
+            _amount = amount;
+        }
         public void Main()
         {
             using (var context = new CriminalContext())
@@ -18,8 +27,7 @@ namespace CriminalDB
                 //context.Database.EnsureCreated();
             }
 
-            Seeder seeder = new Seeder();
-            seeder.SeedDatabase(50);
+            _seeder.SeedDatabase(_amount);
         }
     }
 }

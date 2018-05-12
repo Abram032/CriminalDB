@@ -6,7 +6,10 @@ using System.Text;
 namespace CriminalDB.Persistence.Utilities
 {
     public class GenericParser
-    {
+    {   
+        /// <summary>
+        /// Parses Value
+        /// </summary>   
         public static T ParseValue<T>(TryParseHandler<T> handler, string message = "") where T : struct
         {
             while(true)

@@ -6,17 +6,24 @@ using System.Collections.Generic;
 using System.Text;
 using static CriminalDB.Persistence.Utilities.GenericParser;
 using static CriminalDB.Persistence.Utilities.CommandPrompt;
+using CriminalDB.Core.Utilities;
 
 namespace CriminalDB
 {
     public class Menu
     {
+        private ICrimeForm _form;
+        private IViewForm _view;
+        private IDateTimeParser _dateParser;
+        public Menu(ICrimeForm form, IViewForm view, IDateTimeParser dateParser)
+        {
+            _form = form;
+            _view = view;
+            _dateParser = dateParser;
+        }
+
         public void Main()
         {
-            CriminalContext context = new CriminalContext();
-            ViewForm view = new ViewForm();
-            CrimeForm form = new CrimeForm();
-
             bool menu = true;
             while (menu)
             {
@@ -45,25 +52,25 @@ namespace CriminalDB
                                     addmenu = false;
                                     break;
                                 case "1":
-                                    form.AddCrime();
+                                    _form.AddCrime();
                                     break;                               
                                 case "2":
-                                    form.Remove<Crime>();
+                                    _form.Remove<Crime>();
                                     break;                              
                                 case "3":
-                                    form.RemoveAll<Crime>();
+                                    _form.RemoveAll<Crime>();
                                     break;                             
                                 case "4":
-                                    form.Remove<Criminal>();
+                                    _form.Remove<Criminal>();
                                     break;               
                                 case "5":
-                                    form.RemoveAll<Criminal>();
+                                    _form.RemoveAll<Criminal>();
                                     break;
                                 case "6":
-                                    form.Remove<Victim>();
+                                    _form.Remove<Victim>();
                                     break;
                                 case "7":
-                                    form.RemoveAll<Victim>();
+                                    _form.RemoveAll<Victim>();
                                     break;
                             }
                         }
@@ -85,22 +92,22 @@ namespace CriminalDB
                                     crimemenu = false;
                                     break;
                                 case "1":
-                                    view.Crime();
+                                    _view.Crime();
                                     break;
                                 case "2":
-                                    view.Crime(true);
+                                    _view.Crime(true);
                                     break;
                                 case "3":
-                                    view.Crime(true, true);
+                                    _view.Crime(true, true);
                                     break;
                                 case "4":
-                                    view.AllCrimes();
+                                    _view.AllCrimes();
                                     break;
                                 case "5":
-                                    view.AllCrimes(true);
+                                    _view.AllCrimes(true);
                                     break;
                                 case "6":
-                                    view.AllCrimes(true, true);
+                                    _view.AllCrimes(true, true);
                                     break;
                             }
                         }
@@ -122,28 +129,28 @@ namespace CriminalDB
                                     criminalmenu = false;
                                     break;
                                 case "1":
-                                    view.Person<Criminal>();
+                                    _view.Person<Criminal>();
                                     break;
                                 case "2":
-                                    view.Person<Criminal>(true);
+                                    _view.Person<Criminal>(true);
                                     break;
                                 case "3":
-                                    view.Person<Criminal>(true, true);
+                                    _view.Person<Criminal>(true, true);
                                     break;
                                 case "4":
-                                    view.Person<Criminal>(true, true, true);
+                                    _view.Person<Criminal>(true, true, true);
                                     break;
                                 case "5":
-                                    view.AllPeople<Criminal>();
+                                    _view.AllPeople<Criminal>();
                                     break;
                                 case "6":
-                                    view.AllPeople<Criminal>(true);
+                                    _view.AllPeople<Criminal>(true);
                                     break;
                                 case "7":
-                                    view.AllPeople<Criminal>(true, true);
+                                    _view.AllPeople<Criminal>(true, true);
                                     break;
                                 case "8":
-                                    view.AllPeople<Criminal>(true, true, true);
+                                    _view.AllPeople<Criminal>(true, true, true);
                                     break;
                             }
                         }
@@ -165,28 +172,28 @@ namespace CriminalDB
                                     victimmenu = false;
                                     break;
                                 case "1":
-                                    view.Person<Victim>();
+                                    _view.Person<Victim>();
                                     break;
                                 case "2":
-                                    view.Person<Victim>(true);
+                                    _view.Person<Victim>(true);
                                     break;
                                 case "3":
-                                    view.Person<Victim>(true, true);
+                                    _view.Person<Victim>(true, true);
                                     break;
                                 case "4":
-                                    view.Person<Victim>(true, true, true);
+                                    _view.Person<Victim>(true, true, true);
                                     break;
                                 case "5":
-                                    view.AllPeople<Victim>();
+                                    _view.AllPeople<Victim>();
                                     break;
                                 case "6":
-                                    view.AllPeople<Victim>(true);
+                                    _view.AllPeople<Victim>(true);
                                     break;
                                 case "7":
-                                    view.AllPeople<Victim>(true, true);
+                                    _view.AllPeople<Victim>(true, true);
                                     break;
                                 case "8":
-                                    view.AllPeople<Victim>(true, true, true);
+                                    _view.AllPeople<Victim>(true, true, true);
                                     break;
                             }
                         }

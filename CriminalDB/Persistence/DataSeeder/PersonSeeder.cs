@@ -1,14 +1,20 @@
 ﻿using CriminalDB.Core.DataModels;
+using CriminalDB.Core.DataSeeder;
+using CriminalDB.Core.Utilities;
+using CriminalDB.Persistence.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static CriminalDB.Core.DataModels.Enums;
-using static CriminalDB.Persistence.Utilities.RandomGenerator;
 
 namespace CriminalDB.Persistence.DataSeeder
 {
-    public class PersonSeeder
+    public class PersonSeeder : IPersonSeeder
     {
+        private IRandomGenerator _randomGenerator;
+        public PersonSeeder(IRandomGenerator randomGenerator)
+        {
+            _randomGenerator = randomGenerator;
+        }
         private List<string> maleNames = new List<string>
         { "Jack", "Daniel", "John", "Jackson", "Matthew", "Adam", "Arthur", "Logan", "Bradyn", "George", "Cooper", "Terry", "Carl" };
 
@@ -27,21 +33,25 @@ namespace CriminalDB.Persistence.DataSeeder
         private List<string> streets = new List<string>
         { "Lane", "Avenue", "Street", "Road", "Drive", "Circle", "Court", "Run", "Place" };
 
+        private List<string> genders = new List<string>
+        { "Male", "Female" };
+
         public TEntity GetRandomPersonSeed<TEntity>() where TEntity : Person, new()
         {
             TEntity person = new TEntity();
-            int gender = GetRandomInt(0,2);
-            if(gender == 0)
-                person.FirstName = GetValue(femaleNames);
+            string gender = _randomGenerator.GetRandomElement(genders);
+            if(gender == "Female")
+                person.FirstName = _randomGenerator.GetRandomElement(femaleNames);
             else
-                person.FirstName = GetValue(maleNames);
-            person.LastName = GetValue(lastNames);
-            person.Nationality = GetValue(nationalites);
-            person.Address = GetValue(addresses) + " " + GetValue(streets);
-            person.Gender = (Gender)gender;
-            person.Height = GetRandomInt(150, 230);
-            person.Weight = GetRandomInt(50, 130);
-            person.DateOfBirth = DateTime.Now;
+                person.FirstName = _randomGenerator.GetRandomElement(maleNames);
+            person.LastName = _randomGenerator.GetRandomElement(lastNames);
+            person.Nationality = _randomGenerator.GetRandomElement(nationalites);
+            person.Address = _randomGenerator.GetRandomElement(addresses) 
+                + " " + _randomGenerator.GetRandomElement(streets);
+            person.Gender = gender;
+            person.Height = _randomGenerator.GetRandomInt(150, 230);
+            person.Weight = _randomGenerator.GetRandomInt(50, 130);
+            person.DateOfBirth = _randomGenerator.GetRandomDate();
             person.Photo = "URL";
             return person;
         }

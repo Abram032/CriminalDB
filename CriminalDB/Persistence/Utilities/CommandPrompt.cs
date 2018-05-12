@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CriminalDB.Core.Utilities;
 
 namespace CriminalDB.Persistence.Utilities
 {
@@ -12,9 +13,9 @@ namespace CriminalDB.Persistence.Utilities
             return Console.ReadLine();
         }
         
-        public static string Input(IEnumerable<string> messages)
+        public static string Input<T>(IEnumerable<T> messages)
         {
-            foreach(string message in messages)
+            foreach(T message in messages)
                 Console.WriteLine(message);
             Console.Write("> ");
             return Console.ReadLine();

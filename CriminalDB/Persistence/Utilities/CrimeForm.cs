@@ -7,22 +7,34 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CriminalDB.Persistence.Context;
+using CriminalDB.Core.EntityValidator;
 
 namespace CriminalDB.Persistence.Utilities
 {
     public class CrimeForm : ICrimeForm
     {
+
+        private IDateTimeParser _dateParser;
+        private IEntityValidator _validator;
+
+        public CrimeForm(IDateTimeParser dateParser, IEntityValidator validator)
+        {
+            _dateParser = dateParser;
+            _validator = validator;
+        }
+        
         public void AddCrime()
         {
             using (var unitOfWork = new UnitOfWork(new CriminalContext()))
             {
                 int amount;
                 Crime crime = new Crime();
+                List<Criminal> criminals = new List<Criminal>();
+                List<Victim> victims = new List<Victim>();
+                List<CrimeCriminal> crimeCriminals = new List<CrimeCriminal>();
+                List<CrimeVictim> crimeVictims = new List<CrimeVictim>();
                 crime = CrimeInfo(crime);
                 Console.WriteLine();
-                //Adding to databse
-                unitOfWork.CrimeRepository.Add(crime);
-
                 amount = ParseValue<int>(int.TryParse, "How many criminals?");
                 for (int i = 0; i < amount; i++)
                 {
@@ -38,18 +50,21 @@ namespace CriminalDB.Persistence.Utilities
                         Console.WriteLine();
                         Console.WriteLine("Criminal {0}:", i + 1);
                         criminal = Info(criminal);
-                        unitOfWork.CriminalRepository.Add(criminal);
                     }
+                    //Connecting Criminal to Crime.
                     crimeCriminal.Criminal = criminal;
                     crimeCriminal.Crime = crime;
                     criminal.Crimes.Add(crimeCriminal);
                     crime.CrimeCriminals.Add(crimeCriminal);
-                    unitOfWork.Repository<CrimeCriminal>().Add(crimeCriminal);
+                    //Adding Criminal and CrimeCriminal to list.
+                    criminals.Add(criminal);
+                    crimeCriminals.Add(crimeCriminal);
                 }
                 amount = ParseValue<int>(int.TryParse, "How many victims?");
                 for (int i = 0; i < amount; i++)
                 {
                     Victim victim = new Victim();
+                    CrimeVictim crimeVictim = new CrimeVictim();
                     if(QuestionLoop("Is criminal in database? (y/n)"))
                     {
                         int id = ParseValue<int>(int.TryParse, "Victim ID: ");
@@ -61,30 +76,35 @@ namespace CriminalDB.Persistence.Utilities
                         Console.WriteLine("Victim {0}:", i + 1);
                         victim = Info(victim);
                     }
-
-                    //Adding to fields
-                    CrimeVictim crimeVictim = new CrimeVictim();
+                    //Connecting Victim to Crime.               
                     crimeVictim.Victim = victim;
                     crimeVictim.Crime = crime;
                     victim.Crimes.Add(crimeVictim);
                     crime.CrimeVictims.Add(crimeVictim);
-
-                    //Adding to databse
-                    unitOfWork.VictimRepository.Add(victim);
-                    unitOfWork.Repository<CrimeVictim>().Add(crimeVictim);
+                    //Adding Victim and CrimeVictim to list.
+                    victims.Add(victim);
+                    crimeVictims.Add(crimeVictim);
                 }
-
-                //Add data from lists to database    
-                unitOfWork.Complete();
+                //Validation before adding!               
+                if(ValidateAll(crime, criminals, victims) == false)
+                    Console.WriteLine("Error, validation failed!");
+                else
+                {
+                    unitOfWork.Repository<Crime>().Add(crime);
+                    unitOfWork.Repository<Criminal>().AddRange(criminals);
+                    unitOfWork.Repository<Victim>().AddRange(victims);
+                    unitOfWork.Repository<CrimeCriminal>().AddRange(crimeCriminals);
+                    unitOfWork.Repository<CrimeVictim>().AddRange(crimeVictims);
+                    unitOfWork.Complete();
+                }
             }
             Console.WriteLine("Done.");
         }
 
         private Crime CrimeInfo(Crime crime)
         {
-            DateTime time = DateTime.Now;
             crime.Type = Input("Type:");
-            crime.Time = time;
+            crime.Time = _dateParser.Parse("DateTime format (DD-MM-YYYY HH:MM:SS) \nDate:");
             crime.Location = Input("Location:");
             crime.Description = Input("Description:");
             return crime;
@@ -92,23 +112,22 @@ namespace CriminalDB.Persistence.Utilities
         
         private TEntity Info<TEntity>(TEntity person) where TEntity : Person
         {
-            DateTime time = DateTime.Now;
             person.FirstName = Input("First Name:");
             person.LastName = Input("Last Name:");
             person.Nationality = Input("Nationality:");
-            person.DateOfBirth = time;
+            person.DateOfBirth = _dateParser.Parse("DateTime format: DD-MM-YYYY \nDate:");
             //Gender
             while (true)
             {
                 string _gender = Input("Gender (m/f):");
                 if (_gender.StartsWith('m'))
                 {
-                    person.Gender = Enums.Gender.Male;
+                    person.Gender = "Male";
                     break;
                 }
                 else if (_gender.StartsWith('f'))
                 {
-                    person.Gender = Enums.Gender.Female;
+                    person.Gender = "Female";
                     break;
                 }
                 else
@@ -164,6 +183,26 @@ namespace CriminalDB.Persistence.Utilities
                 else
                     Console.Write("Invalid option.");
             }
+        }
+
+        private bool ValidateAll(Crime crime, List<Criminal> criminals, List<Victim> victims)
+        {
+            List<bool> validationResults = new List<bool>();
+            validationResults.Add(_validator.Validate(crime));
+            validationResults.Add(_validator.ValidateDates(crime.Time));
+            foreach(var criminal in criminals)
+            {
+                validationResults.Add(_validator.Validate(criminal));
+                validationResults.Add(_validator.ValidateDates(criminal.DateOfBirth, crime.Time));
+            }
+            foreach(var victim in victims)
+            {
+                validationResults.Add(_validator.Validate(victim));
+                validationResults.Add(_validator.ValidateDates(victim.DateOfBirth, crime.Time));
+            }
+            if(validationResults.Contains(false))
+                return false;
+            return true;
         }
     }
 }

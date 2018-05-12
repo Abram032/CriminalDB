@@ -1,13 +1,20 @@
 ﻿using CriminalDB.Core.DataModels;
 using System;
 using System.Collections.Generic;
-using static CriminalDB.Persistence.Utilities.RandomGenerator;
 using System.Text;
+using CriminalDB.Persistence.Utilities;
+using CriminalDB.Core.Utilities;
+using CriminalDB.Core.DataSeeder;
 
 namespace CriminalDB.Persistence.DataSeeder
 {
-    public class CrimeSeeder
+    public class CrimeSeeder : ICrimeSeeder
     {
+        private IRandomGenerator _randomGenerator;
+        public CrimeSeeder(IRandomGenerator randomGenerator)
+        {
+            _randomGenerator = randomGenerator;
+        }
         private List<string> crimeTypes = new List<string>
         { "Arson", "Theft", "Burglary", "Fraud", "Piracy", "Cyber Crime", "Murder", "Robbery", "Terrorism" };
 
@@ -18,9 +25,9 @@ namespace CriminalDB.Persistence.DataSeeder
         {
             Crime crime = new Crime
             {
-                Type = GetValue(crimeTypes),
-                Location = GetValue(locations),
-                Time = DateTime.Now,
+                Type = _randomGenerator.GetRandomElement(crimeTypes),
+                Location = _randomGenerator.GetRandomElement(locations),
+                Time = _randomGenerator.GetRandomDate(2017, 2018, true),
                 Description = "Radnom description."
             };
             return crime;
